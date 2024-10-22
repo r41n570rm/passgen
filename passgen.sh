@@ -2,7 +2,6 @@
 # Purpose: Password Generator - Includes OWASP password special characters
 # Date: 2024.10.17
 
-
 # Usage function
 usage() {
 	echo -e "Usage:"
@@ -14,6 +13,20 @@ usage() {
 	exit 1
 }
 
+#######################################
+# Generate password
+# Globals:
+#   choice
+#   pass_len
+# Arguments:
+#   None
+# Outputs:
+#   Generated password
+#######################################
+genPassword(){
+	cat /dev/urandom | tr -cd "$choice" | head -c "$pass_len" # Generate and display password
+}
+
 OPTERR="Invalid script options specified!"
 
 uppercase_chars="[:upper:]" 
@@ -22,42 +35,35 @@ numbers="[:digit:]"
 special_chars="!\"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~" # OWASP password special characters (space not included)
 
 choice=""
-
-
-if [[ $# -eq 0 ]]; then
-	usage	
-fi
-
-
-# Handling options using getopts
+# Handling command line options using getopts
 while getopts 'ulnsc' opt; do
 	case $opt in
 		u)	choice+=$uppercase_chars
 			;;
-
 		l)	choice+=$lowercase_chars
 			;;
-
 		n)	choice+=$numbers
 			;;
-
 		s)	choice+=$special_chars
 			;;
 		c)	clipboard=true
 			;;
-		*)	echo -e $OPTERR && usage
+		*)	echo -e "$OPTERR" && usage
 			;;	
 	esac
 done
 
+# Display usage message if options have not been specified
+if [[ -z $choice ]]; then
+	usage
+fi
 
 read -r -p "Enter password length: " pass_len # Prompt user to enter desired password length
 
-
 if [[ $clipboard ]]; then	
-	cat /dev/urandom| tr -cd $choice | head -c $pass_len | xclip -selection clipboard # Generate password and redirect output to clipboard using xclip
+	genPassword | xclip -selection clipboard 	# Generate password and redirect output to clipboard using xclip
 else
-	cat /dev/urandom| tr -cd $choice | head -c $pass_len	# Generate and display password to terminal
+	genPassword	 				# Generate password and display to terminal
 fi
 
 exit 0
