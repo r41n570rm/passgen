@@ -35,6 +35,8 @@ numbers="[:digit:]"
 special_chars="!\"#$%&'()*+,-./:;<=>?@[\\]^_\`{|}~" # OWASP password special characters (space not included)
 
 choice=""
+clipboard=""
+
 # Handling command line options using getopts
 while getopts 'ulnsc' opt; do
 	case $opt in
