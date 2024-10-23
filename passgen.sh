@@ -60,7 +60,15 @@ if [[ -z $choice ]]; then
 	usage
 fi
 
-read -r -p "Enter password length: " pass_len # Prompt user to enter desired password length
+while true; do
+	read -r -p "Enter password length: " pass_len # Prompt user to enter desired password length
+
+	if [[ -n $pass_len && $pass_len != *[!0123456789]* ]]; then	# If valid password length is entered	
+		break
+	else
+		echo -e "Entered password length must be a number! Please try again."  # Inform user if invalid password length is entered
+	fi
+done
 
 if [[ $clipboard ]]; then	
 	genPassword | xclip -selection clipboard 	# Generate password and redirect output to clipboard using xclip
